@@ -4,13 +4,13 @@ import React, { useState } from 'react';
 import useAuth from '../../../hooks/useAuth';
 
 const RegisterForm = () => {
-    const [username, setUsername] = useState('');
+    const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const { register } = useAuth();
 
-    const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value);
+    const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value);
     const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value);
     const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value);
 
@@ -18,8 +18,8 @@ const RegisterForm = () => {
 
     const isFormValid = () => {
         return (
-            username.length > 0 &&
-            username.length <= 20 &&
+            name.length > 0 &&
+            name.length <= 20 &&
             /^[a-zA-Z0-9_.+-]+@([a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]*\.)+[a-zA-Z]{2,}$/.test(email) &&
             password.length >= 8
         );
@@ -28,7 +28,7 @@ const RegisterForm = () => {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (isFormValid()) {
-            register(username, email, password);
+            register(name, email, password);
         }
     };
 
@@ -39,12 +39,12 @@ const RegisterForm = () => {
                 <label className="block text-sm font-medium text-gray-700">アカウント名</label>
                 <input
                     type="text"
-                    value={username}
-                    onChange={handleUsernameChange}
+                    value={name}
+                    onChange={handleNameChange}
                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                     required
                 />
-                <p className="text-xs text-gray-500">現在の文字数: {username.length}/20</p>
+                <p className="text-xs text-gray-500">現在の文字数: {name.length}/20</p>
             </div>
             <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700">メールアドレス</label>

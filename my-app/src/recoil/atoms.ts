@@ -3,8 +3,9 @@ import { atom } from 'recoil';
 // ユーザー情報の型定義
 interface User {
   id: string;
-  username: string;
+  name: string; // 'name' プロパティを追加
   email: string;
+  iconImageUrl?: string;
   // その他のユーザー情報
 }
 
