@@ -21,11 +21,11 @@ export async function createAccount(data: { name: string; email: string; passwor
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     });
-    if (!response.ok) {
-      const errorData = await response.json();
-      return { success: false, error: errorData.message };
-    }
     const result = await response.json();
+    if (!response.ok) {
+      return { success: false, error: result.message };
+    }
+    console.log('Account created:', result); // デバッグ用に追加
     return { success: true, userData: result.user, token: result.token };
   } catch (error) {
     return { success: false, error: 'Network error' };
@@ -39,11 +39,11 @@ export async function signIn(data: { email: string; password: string }): Promise
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     });
-    if (!response.ok) {
-      const errorData = await response.json();
-      return { success: false, error: errorData.message };
-    }
     const result = await response.json();
+    if (!response.ok) {
+      return { success: false, error: result.message };
+    }
+    console.log('Sign in result:', result); // デバッグ用に追加
     return { success: true, userData: result.user, token: result.token };
   } catch (error) {
     return { success: false, error: 'Network error' };
@@ -59,15 +59,14 @@ export async function getUserData(token: string): Promise<ApiResponse<User>> {
         'Authorization': `Bearer ${token}`,
       },
     });
+    const result = await response.json();
     if (!response.ok) {
       console.error('Failed to fetch user data:', response.statusText);
-      return { success: false };
+      return { success: false, error: result.message };
     }
-    const userData = await response.json();
-    console.log('User data fetched:', userData); // デバッグ用に追加
-    return { success: true, userData };
+    return { success: true, userData: result.user };
   } catch (error) {
     console.error('Error fetching user data:', error);
-    return { success: false };
+    return { success: false, error: 'Network error' };
   }
 }

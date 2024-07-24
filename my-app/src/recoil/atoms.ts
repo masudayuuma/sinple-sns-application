@@ -1,12 +1,10 @@
 import { atom } from 'recoil';
 
-// ユーザー情報の型定義
 interface User {
   id: string;
-  name: string; // 'name' プロパティを追加
+  name: string;
   email: string;
   iconImageUrl?: string;
-  // その他のユーザー情報
 }
 
 export const userState = atom<User | null>({

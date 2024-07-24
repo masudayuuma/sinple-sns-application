@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 import { useRouter, usePathname } from 'next/navigation';
 import { userState, tokenState } from '../recoil/atoms';
-import { getUserData, signIn, createAccount, User } from '../utils/api';  // User 型をインポート
+import { getUserData, signIn, createAccount, User } from '../utils/api'; 
 
 const useAuth = () => {
   const [user, setUser] = useRecoilState(userState);
@@ -20,17 +20,18 @@ const useAuth = () => {
     if (storedToken) {
       getUserData(storedToken).then(response => {
         if (response.success && response.userData) {
-          setUser(response.userData);  // ユーザーデータを設定
+          setUser(response.userData);
           setToken(storedToken);
-          console.log('User data set in state:', response.userData); // デバッグ用に追加
-          router.push('/posts');
+          console.log('getuserを使ってuserdataを取得:', response.userData);
         } else {
           localStorage.removeItem('token');
-          router.push('/auth/login');  // ログインページにリダイレクト
+          console.log('respons失敗またはuserdataがない(useEffect内)');
+          router.push('/auth/login');
         }
       });
     } else {
-      router.push('/auth/login');  // ログインページにリダイレクト
+      router.push('/auth/login');
+      console.log('トークンの取得に失敗(useEffect内)');
     }
   }, [router, setToken, setUser, pathname]);
 
@@ -39,9 +40,11 @@ const useAuth = () => {
     if (response.success && response.userData && response.token) {
       localStorage.setItem('token', response.token);
       setToken(response.token);
-      setUser(response.userData);  // ユーザーデータを設定
-      router.push('/posts');
+      setUser(response.userData);
+      console.log('ログインに成功しました:', response.userData);
+      router.push('/myPage');
     } else {
+      console.log('ログインに失敗しました:', response.error);
       alert(response.error);
     }
   };
@@ -52,8 +55,10 @@ const useAuth = () => {
       localStorage.setItem('token', response.token);
       setToken(response.token);
       setUser(response.userData);  // ユーザーデータを設定
-      router.push('/posts');
+      console.log('新規登録に成功:', response.userData);
+      router.push('/myPage');
     } else {
+      console.log('新規登録に失敗:', response.error);
       alert(response.error);
     }
   };
@@ -62,9 +67,12 @@ const useAuth = () => {
     setUser(null);
     setToken(null);
     localStorage.removeItem('token');
+    console.log('データを削除しました');
     router.push('/auth/login');
   };
 
+  
+//userはいるのか？
   return { user, login, register, logout };
 };
 

@@ -16,6 +16,7 @@ const LoginForm = () => {
 
     const isFormValid = /^[a-zA-Z0-9_.+-]+@([a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]*\.)+[a-zA-Z]{2,}$/.test(email) && password.length >= 8;
 
+    //email,passwordが送信されるuseAuthへ
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (isFormValid) {
@@ -57,7 +58,7 @@ const LoginForm = () => {
             </div>
             <button
                 type="submit"
-                disabled={!isFormValid}
+                disabled={!isFormValid} //disabled 属性: この属性が true の場合、ボタンは無効化されクリックできなくなります。
                 className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:border-indigo-700 focus:ring-1 focus:ring-indigo-700"
             >
                 ログイン

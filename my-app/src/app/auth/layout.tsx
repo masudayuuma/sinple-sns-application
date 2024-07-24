@@ -4,12 +4,13 @@ import { ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { RecoilRoot } from 'recoil';
 
+//childrenの型定義
 interface AuthLayoutProps {
-  children: ReactNode;  // childrenの型をReactNodeとして明示
+  children: ReactNode;  
 }
 
 const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
-  const router = useRouter();  // useRouter フックを使用して router を定義
+  const router = useRouter(); 
 
   return (
     <RecoilRoot>
@@ -17,13 +18,13 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
         <h1 className="text-4xl font-bold mb-8">Auth Page</h1>
         <div className="flex space-x-4 mb-8">
           <button
-            onClick={() => router.push('/auth/login')}  // router を使用
+            onClick={() => router.push('/auth/login')}  
             className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700"
           >
             Login
           </button>
           <button
-            onClick={() => router.push('/auth/register')}  // router を使用
+            onClick={() => router.push('/auth/register')} 
             className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-700"
           >
             Register
