@@ -10,10 +10,10 @@ const BottomNavigation = () => {
         <button onClick={() => router.push('/posts')} className="text-gray-600 hover:text-gray-900">
           投稿一覧
         </button>
-        <button onClick={() => router.push('/posts/new')} className="text-gray-600 hover:text-gray-900">
+        <button onClick={() => router.push('/posts/newPost')} className="text-gray-600 hover:text-gray-900">
           投稿作成
         </button>
-        <button onClick={() => router.push('/mypage')} className="text-gray-600 hover:text-gray-900">
+        <button onClick={() => router.push('/myPage')} className="text-gray-600 hover:text-gray-900">
           My Page
         </button>
       </div>
