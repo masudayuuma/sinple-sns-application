@@ -16,18 +16,15 @@ const RegisterForm = () => {
 
     const toggleShowPassword = () => setShowPassword(!showPassword);
 
-    const isFormValid = () => {
-        return (
+    const isFormValid =
             name.length > 0 &&
             name.length <= 20 &&
             /^[a-zA-Z0-9_.+-]+@([a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]*\.)+[a-zA-Z]{2,}$/.test(email) &&
-            password.length >= 8
-        );
-    };
+            password.length >= 8;
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (isFormValid()) {
+        if (isFormValid) {
             register(name, email, password);
         }
     };
@@ -77,8 +74,12 @@ const RegisterForm = () => {
             </div>
             <button
                 type="submit"
-                disabled={!isFormValid()}
-                className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:border-indigo-700 focus:ring-1 focus:ring-indigo-700"
+                disabled={!isFormValid}
+                className={`w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
+                    isFormValid
+                      ? 'bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:border-indigo-700 focus:ring-1 focus:ring-indigo-700'
+                      : 'bg-gray-400 cursor-not-allowed'
+                  }`}
             >
                 登録
             </button>
