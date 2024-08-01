@@ -1,10 +1,15 @@
 'use client';
 
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import useAuth from '../../../hooks/useAuth';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 const LoginForm = () => {
+    const searchParams = useSearchParams();
+    const router = useRouter();
     const [email, setEmail] = useState('');
+    const [showSuccessMessage, setShowSuccessMessage] = useState(false);
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const { login } = useAuth();
@@ -16,7 +21,7 @@ const LoginForm = () => {
 
     const isFormValid = /^[a-zA-Z0-9_.+-]+@([a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]*\.)+[a-zA-Z]{2,}$/.test(email) && password.length >= 8;
 
-    //email,passwordが送信されるuseAuthへ
+    
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (isFormValid) {
@@ -24,7 +29,23 @@ const LoginForm = () => {
         }
     };
 
+    useEffect(() => {
+        if (searchParams.get('success') === 'true') {
+            setShowSuccessMessage(true);
+            setTimeout(() => {
+                setShowSuccessMessage(false);
+                router.replace('/auth/login');
+            }, 3000);
+        }
+    },[]);
+
     return (
+        <div className="container mx-auto p-4">
+        {showSuccessMessage && (
+            <div className="p-4 mb-4 text-sm text-green-700 bg-green-100 rounded-lg">
+             ログアウトしました！
+            </div>
+          )}
         <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md w-80">
             <h2 className="text-2xl font-bold mb-6">ログイン</h2>
             <div className="mb-4">
@@ -64,6 +85,7 @@ const LoginForm = () => {
                 ログイン
             </button>
         </form>
+        </div>
     );
 };
 

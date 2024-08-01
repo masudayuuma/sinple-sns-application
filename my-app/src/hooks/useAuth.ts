@@ -55,7 +55,7 @@ const useAuth = () => {
     setUser(null);
     setToken(null);
     localStorage.removeItem('token');
-    router.push('/auth/login');
+    router.push('/auth/login?success=true');
   };
 
   return { login, register, logout };
