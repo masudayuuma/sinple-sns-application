@@ -18,7 +18,7 @@ const NewPostPage = () => {
   useEffect(() => {
     if (!token) router.push('/auth/login');
     else setIsLoading(false);
-  }, [token]);
+  }, []);
 
   if (isLoading) {
     return null;
@@ -38,7 +38,7 @@ const NewPostPage = () => {
       setIsLoadingNewPost(true);
       try {
         await createPost(token, content);
-        router.push('/posts');
+        router.push('/posts?success=true');
       } catch (err) {
         setError('投稿に失敗しました');
         setIsLoadingNewPost(false);

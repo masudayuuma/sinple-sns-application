@@ -53,7 +53,7 @@ const PostsPage = () => {
         }
       });
     }
-  }, [searchParams, token, error]);
+  }, [token, error]);
 
   if (isLoading) {
     return null;

@@ -28,7 +28,7 @@ const MyPage = () => {
         setError(null);
       })
     }
-  },[searchParams, token, error]);
+  },[error]);
 
   if (isLoading) {
     return null;
