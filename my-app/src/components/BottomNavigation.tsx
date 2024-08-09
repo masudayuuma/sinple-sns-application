@@ -1,21 +1,24 @@
 import React from 'react';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { FaListAlt, FaPlus, FaUser } from 'react-icons/fa';
 
 const BottomNavigation = () => {
-  const router = useRouter();
 
   return (
     <nav className="fixed bottom-0 left-0 w-full bg-white border-t border-gray-200">
       <div className="flex justify-around p-4">
-        <button onClick={() => router.push('/posts')} className="text-gray-600 hover:text-gray-900">
-          投稿一覧
-        </button>
-        <button onClick={() => router.push('/posts/newPost')} className="text-gray-600 hover:text-gray-900">
-          投稿作成
-        </button>
-        <button onClick={() => router.push('/myPage')} className="text-gray-600 hover:text-gray-900">
-          My Page
-        </button>
+        <Link href="/posts" className="flex flex-col items-center text-gray-600 hover:text-gray-900">
+          <FaListAlt size={24} />
+          <span className="text-sm">投稿一覧</span>
+        </Link>
+        <Link href="/posts/newPost" className="flex flex-col items-center text-gray-600 hover:text-gray-900">
+          <FaPlus size={24} />
+          <span className="text-sm">投稿作成</span>
+        </Link>
+        <Link href="/myPage" className="flex flex-col items-center text-gray-600 hover:text-gray-900">
+          <FaUser size={24} />
+          <span className="text-sm">My Page</span>
+        </Link>
       </div>
     </nav>
   );
