@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { userState, tokenState } from '../../recoil/atoms';
 import useAuth from '../../hooks/useAuth';
 import { uploadIconImage } from '../../utils/api';
 import Layout from '@/components/Layout';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 const MyPage = () => {
   const { logout } = useAuth();
@@ -13,9 +14,19 @@ const MyPage = () => {
   const token = useRecoilValue(tokenState);
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
+  useEffect(() => {
+    if(!token) router.push('/auth/login');
+    else setIsLoading(false);
+  },[searchParams]);
+
+  if (isLoading) {
+    return null;
+  }
   
-
   if (!userInfo) {
     return <div>Loading...</div>;
   }
