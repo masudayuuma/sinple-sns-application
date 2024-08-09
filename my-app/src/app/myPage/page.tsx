@@ -15,13 +15,20 @@ const MyPage = () => {
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const searchParams = useSearchParams();
   const router = useRouter();
 
   useEffect(() => {
     if(!token) router.push('/auth/login');
     else setIsLoading(false);
-  },[searchParams]);
+
+    if (error){
+      setTimeout(() => {
+        setError(null);
+      })
+    }
+  },[searchParams, token, error]);
 
   if (isLoading) {
     return null;
@@ -45,10 +52,9 @@ const MyPage = () => {
     const response = await uploadIconImage(token, file);
     if (response.success && response.userData) {
       setUserInfo(response.userData);
-      console.log('アイコン画像を更新しました:', response.userData);
     } else {
       console.error('アイコン画像のアップロードに失敗しました:', response.error);
-      alert('アイコン画像のアップロードに失敗しました');
+      setError('アイコン画像のアップロードに失敗しました');
     }
 
     setUploading(false);
@@ -77,6 +83,13 @@ const MyPage = () => {
           >
             {uploading ? 'Uploading...' : 'Upload Icon'}
           </button>
+          {
+            error && (
+              <div className="p-4 mt-2 text-sm text-red-700 bg-red-100 rounded-lg">
+                {error}
+              </div>
+            )
+          }
         </div>
 
         <button
