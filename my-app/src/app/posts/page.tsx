@@ -61,8 +61,14 @@ const PostsPage = () => {
 
      const handleDelete = async (postId: string) => {
         if(!token) return;
+        console.log('削除しました');
         setIsDeleting(true);
-        confirm('本当に削除しますか？');
+
+        const isConfirmed = confirm('本当に削除しますか？');
+          if (!isConfirmed) {
+            setIsDeleting(false);
+        return;}
+
         try {
           const response = await deletePost(token, postId);
           setPosts(posts.filter(post => post.id !== postId));
@@ -120,13 +126,17 @@ const PostsPage = () => {
                   </div>
                 </div>
                 {userInfo && userInfo.id === post.user.id && (
-                  <button
-                    onClick={() => handleDelete(post.id)} className="text-red-500 hover:text-red-700"
-                    disabled={isDeleting}
-                  >
-                    <FontAwesomeIcon icon={faTrash} />
-                  </button>
+                <button
+                  onClick={() => handleDelete(post.id)}
+                  disabled={isDeleting}
+                  className={`text-red-500 rounded hover:text-red-700 ${
+                  isDeleting ? 'bg-gray-400 cursor-not-allowed' : 'hover:bg-red-100'
+                  }`}
+                >
+                <FontAwesomeIcon icon={faTrash} /> 削除
+                </button>
                 )}
+
               </div>
               <p>{formatPostContent(post.body)}</p>
             </div>

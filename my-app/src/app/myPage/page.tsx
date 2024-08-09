@@ -46,18 +46,23 @@ const MyPage = () => {
 
   const handleUpload = async () => {
     if (!file || !token) return;
-
+    console.log('uploading...');
     setUploading(true);
 
-    const response = await uploadIconImage(token, file);
-    if (response.success && response.userData) {
-      setUserInfo(response.userData);
-    } else {
-      console.error('アイコン画像のアップロードに失敗しました:', response.error);
+    try {
+      const response = await uploadIconImage(token, file);
+      if(response.success && response.userData){
+        setUserInfo(response.userData);
+      }
+    }catch (error) {
+      console.error('アイコン画像のアップロードに失敗しました:', error);
       setError('アイコン画像のアップロードに失敗しました');
-    }
-
-    setUploading(false);
+    }finally{
+      setTimeout(() => {
+        setUploading(false);
+        setFile(null);
+      }, 2000);
+    };
   };
 
   const defaultIconImageUrl = `https://robohash.org/${userInfo.name}`; // デフォルト画像のURL
@@ -75,14 +80,17 @@ const MyPage = () => {
         />
 
         <div className="mt-4">
-          <input type="file" onChange={handleFileChange} />
+        <input type="file" onChange={handleFileChange} />
           <button
             onClick={handleUpload}
-            disabled={uploading}
-            className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700"
-          >
+            disabled={uploading || !file}
+            className={`mt-2 px-4 py-2 text-white rounded-md ${
+             uploading|| !file ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+            }`}
+            >
             {uploading ? 'Uploading...' : 'Upload Icon'}
           </button>
+
           {
             error && (
               <div className="p-4 mt-2 text-sm text-red-700 bg-red-100 rounded-lg">
