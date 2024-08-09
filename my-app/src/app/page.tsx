@@ -1,20 +1,25 @@
 'use client';
 
-import React from "react";
-import useAuth from "@/hooks/useAuth";
-import Layout from "@/components/Layout";
+import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(true);
 
-  useAuth();
-  
+  useEffect(() => {
+    const storedToken = localStorage.getItem('token');
+    if (storedToken) {
+      router.push('/posts');
+    } else {
+      router.push('/auth/login');
+    }
+    setIsLoading(false);
+  }, [isLoading, router]);
 
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <Layout>
-      <h1 className="text-3xl font-bold">ようこそ</h1>
-      <p className="text-xl">Xのようなスマホアプリ</p>
-      </Layout>
-    </main>
-  );
+  if (isLoading) {
+    return null; 
+  }
+
+  return <div>loading...</div>;
 }
