@@ -7,7 +7,10 @@ import { tokenState, userState } from '../../recoil/atoms';
 import { getPosts, deletePost } from '../../utils/api';
 import { Post } from '../../utils/api';
 import Layout from '../../components/Layout';
-import useAuth  from '../../hooks/useAuth';
+import useAuth from '../../hooks/useAuth';
+import Link from 'next/link';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
 
 const PostsPage = () => {
   const router = useRouter();
@@ -16,16 +19,29 @@ const PostsPage = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const token = useRecoilValue(tokenState);
   const userInfo = useRecoilValue(userState);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useAuth();
 
   useEffect(() => {
+    if (token) {
+      setIsLoading(false);
+    }
+
     if (searchParams.get('success') === 'true') {
       setShowSuccessMessage(true);
       setTimeout(() => {
         setShowSuccessMessage(false);
         router.replace('/posts');
       }, 2000);
+    }
+
+    if (error) {
+      setTimeout(() => {
+        setError(null);
+      }, 3000);
     }
 
     if (token) {
@@ -37,18 +53,25 @@ const PostsPage = () => {
         }
       });
     }
-  }, [searchParams, token]);
+  }, [searchParams, token, error]);
 
-  const handleDelete = async (postId: string) => {
-    if (!token) return;
+  if (isLoading) {
+    return null;
+  }
 
-    const response = await deletePost(token, postId);
-    if (response.success) {
-      setPosts(posts.filter(post => post.id !== postId));
-    } else {
-      console.error('Failed to delete post:', response.error);
+     const handleDelete = async (postId: string) => {
+        if(!token) return;
+        setIsDeleting(true);
+        confirm('本当に削除しますか？');
+        try {
+          const response = await deletePost(token, postId);
+          setPosts(posts.filter(post => post.id !== postId));
+        }catch(err) {
+          setError("投稿の削除に失敗しました");
+        }finally {
+          setIsDeleting(false);
+        }
     }
-  };
 
   const formatDate = (dateString: string) => {
     const options: Intl.DateTimeFormatOptions = {
@@ -62,45 +85,61 @@ const PostsPage = () => {
     return new Date(dateString).toLocaleDateString('ja-JP', options);
   };
 
+  const formatPostContent = (content: string) => {
+    return content.split('\n').map((line, index) => (
+      <React.Fragment key={index}>
+        {line}
+        <br />
+      </React.Fragment>
+    ));
+  };
 
   return (
     <Layout>
-      <div className="container mx-auto p-4">
+      <div className="container mx-auto p-4 mb-8">
         <h1 className="text-3xl font-bold">投稿一覧</h1>
         {showSuccessMessage && (
           <div className="p-4 mb-4 text-sm text-green-700 bg-green-100 rounded-lg">
             投稿が成功しました！
           </div>
         )}
+        {error && (
+          <div className="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg">
+            {error}
+          </div>
+        )}
         <div className="grid gap-4">
           {posts.map(post => (
-            <div key={post.id} className="p-4 bg-white rounded shadow">
-              <div className="flex items-center mb-2">
-                <img src={post.user.iconImageUrl || `https://robohash.org/${post.user.name}`} alt="User Icon" className="w-10 h-10 rounded-full mr-2" />
-                <div>
-                  <p className="font-bold">{post.user.name}</p>
-                  <p className="text-sm text-gray-500">{formatDate(post.createdAt)}</p>
+            <div key={post.id} className="p-4 bg-white rounded shadow overflow-hidden break-words">
+              <div className="flex justify-between items-center mb-2">
+                <div className="flex items-center mb-2">
+                  <img src={post.user.iconImageUrl || `https://robohash.org/${post.user.name}`} alt="User Icon" className="w-10 h-10 rounded-full mr-2" />
+                  <div>
+                    <p className="font-bold">{post.user.name}</p>
+                    <p className="text-sm text-gray-500">{formatDate(post.createdAt)}</p>
+                  </div>
                 </div>
+                {userInfo && userInfo.id === post.user.id && (
+                  <button
+                    onClick={() => handleDelete(post.id)} className="text-red-500 hover:text-red-700"
+                    disabled={isDeleting}
+                  >
+                    <FontAwesomeIcon icon={faTrash} />
+                  </button>
+                )}
               </div>
-              <p>{post.body}</p>
-              {post.userId === userInfo?.id && (
-                <button
-                  onClick={() => handleDelete(post.id)}
-                  className="mt-2 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-700"
-                >
-                  Delete
-                </button>
-              )}
+              <p>{formatPostContent(post.body)}</p>
             </div>
           ))}
         </div>
-        <button
-          onClick={() => router.push('/posts/newPost')}
+        <Link
+          href="/posts/newPost"
           className="fixed bottom-20 right-8 bg-blue-500 text-white rounded-full w-16 h-16 flex items-center justify-center shadow-lg hover:bg-blue-700"
         >
           ＋
-        </button>
+        </Link>
       </div>
+      <div className='text-center'>これ以上投稿はありません</div>
     </Layout>
   );
 };
