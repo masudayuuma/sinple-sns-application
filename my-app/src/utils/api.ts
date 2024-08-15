@@ -117,7 +117,7 @@ export async function createPost(token: string, postContent: string): Promise<Ap
     }
     return { success: true, userData: result.post };
   } catch (error) {
-    return { success: false, error: 'Network error' };
+    return { success: false, error: '投稿できませんでした' };
   }
 }
 
