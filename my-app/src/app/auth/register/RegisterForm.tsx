@@ -31,25 +31,21 @@ const RegisterForm = () => {
         if (isFormValid && !isLoading) {
             setIsLoading(true);
             setError(null);
-            try {
-                await register(name, email, password);
-            } catch (err){
-                setError("同一のメールアドレスを使用したユーザーが既にいます");
+
+            const response = await register(name, email, password);
+            if (!response.success) {
+                setError(response.error || 'メールアドレスまたはパスワードが間違っています');
+                setShowErrorMessage(true);
+                setTimeout(() => {
+                    setError(null);
+                    setIsLoading(false);
+                    setShowErrorMessage(false);
+                }, 2000);
                 // ダイアログとフラッシュメッセージともに表示する必要はないと考える
                 // alert(error); 
-                setIsLoading(false);
             }
         }
-    };
-
-    useEffect(() => {
-        if (error){
-            setShowErrorMessage(true);
-            setTimeout(() => {
-                setShowErrorMessage(false);
-            }, 3000);
-        }
-    }, [error]);
+    }
 
     return (
         <div className="container mx-auto p-4">
@@ -107,11 +103,11 @@ const RegisterForm = () => {
                       : 'bg-gray-400 cursor-not-allowed'
                   }`}
             >
-                登録
+                {isLoading ? 'Loading...' : '新規登録'}
             </button>
         </form>
         {showErrorMessage && (
-                <div className="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg">
+                <div className="mt-4 text-sm text-red-700 bg-red-100 p-2 rounded-lg">
                 {error}
                 </div>
             )}

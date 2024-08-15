@@ -28,14 +28,19 @@ const LoginForm = () => {
         if (isFormValid && !isLoading) {
             setIsLoading(true);
             setError(null);
-            try {
-                await login(email, password);
-            } catch (err) {
-                setError('メールアドレスまたはパスワードが間違っています');
-                setIsLoading(false);
+
+            const response = await login(email, password);
+            if (!response.success) {
+                setError(response.error || 'メールアドレスまたはパスワードが間違っています');
+                setShowErrorMessage(true);
+                setTimeout(() => {
+                    setError(null);
+                    setIsLoading(false);
+                    setShowErrorMessage(false);
+                }, 2000);
             }
         }
-    }
+    };
 
     useEffect(() => {
         if (searchParams.get('success') === 'true') {
@@ -45,14 +50,15 @@ const LoginForm = () => {
                 router.replace('/auth/login');
             }, 3000);
         }
-        
-        if (error) {
+        if(searchParams.get('success') === 'false'){
             setShowErrorMessage(true);
+            setError('エラーが発生したため、ログアウトしました');
             setTimeout(() => {
                 setShowErrorMessage(false);
+                router.replace('/auth/login');
             }, 3000);
         }
-    }, [searchParams, router, error]);
+    }, [searchParams, router]);
 
     return (
         <div className="container mx-auto p-4">

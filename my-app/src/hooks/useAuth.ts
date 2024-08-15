@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { useRouter, usePathname } from 'next/navigation';
 import { userState, tokenState } from '../recoil/atoms';
-import { getUserData, signIn, createAccount, User } from '../utils/api';
+import { getUserData, signIn, createAccount, User, ApiResponse } from '../utils/api';
 
 const useAuth = () => {
   const [user, setUser] = useRecoilState(userState);
@@ -23,7 +23,7 @@ const useAuth = () => {
           setToken(storedToken);
         } else {
           localStorage.removeItem('token');
-          router.push('/auth/login');
+          router.push('/auth/login?success=false');
         }
         });
       } else {
@@ -31,32 +31,34 @@ const useAuth = () => {
     }
   }, [pathname, router]);
 
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string): Promise<ApiResponse<null>> => {
     const response = await signIn({ email, password });
     if (response.success && response.userData && response.token) {
-      localStorage.setItem('token', response.token);
-      console.log("loginしました");
-        if (response.token && response.userData) {
-          setToken(response.token);
-          setUser(response.userData);
-          router.push('/posts');
-        }
+        localStorage.setItem('token', response.token);
+        setToken(response.token);
+        setUser(response.userData);
+        router.push('/posts');
+        return { success: true, error: null };
     } else {
-      return Promise.reject(response.error);
+        console.log(response.error);
+        return { success: false, error: response.error };
     }
-  };
-  
+};
+
   const register = async (name: string, email: string, password: string) => {
     const response = await createAccount({ name, email, password });
     if (response.success && response.userData && response.token) {
       localStorage.setItem('token', response.token);
       router.push('/posts');
+      return { success: true, error: null };
     } else {
-      return Promise.reject(response.error);
+      console.log (response.error);
+      return { success :false , error: response.error };
     }
   };
 
   const logout = () => {
+    alert('ログアウトします');
     setUser(null);
     setToken(null);
     localStorage.removeItem('token');
