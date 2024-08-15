@@ -23,11 +23,10 @@ const MyPage = () => {
     if(!token) router.push('/auth/login');
     else setIsLoading(false);
 
-    if (error){
-      setTimeout(() => {
-        setError(null);
-      })
-    }
+    setTimeout(() => {
+      setError(null);
+    }, 3000);
+
   },[error]);
 
   if (isLoading) {
@@ -46,24 +45,31 @@ const MyPage = () => {
 
   const handleUpload = async () => {
     if (!file || !token) return;
+  
     console.log('uploading...');
     setUploading(true);
-
+  
     try {
       const response = await uploadIconImage(token, file);
       if(response.success && response.userData){
         setUserInfo(response.userData);
+        setError(null); 
+      } else if (response.error) {
+        console.log('Upload Error:', response.error);
+        setError(response.error);
       }
-    }catch (error) {
-      console.error('アイコン画像のアップロードに失敗しました:', error);
+    } catch (error) {
+      console.log('アイコン画像のアップロードに失敗しました:', error);
       setError('アイコン画像のアップロードに失敗しました');
-    }finally{
+    } finally {
       setTimeout(() => {
+        console.log('uploading done');
         setUploading(false);
         setFile(null);
       }, 2000);
-    };
+    }
   };
+  
 
   const defaultIconImageUrl = `https://robohash.org/${userInfo.name}`; // デフォルト画像のURL
 

@@ -48,36 +48,41 @@ const PostsPage = () => {
       getPosts(token).then(response => {
         if (response.success && response.userData) {
           setPosts(response.userData);
+          console.log('getposts');
         } else {
-          console.error('Failed to fetch posts:', response.error);
+          console.log('Failed to fetch posts:', response.error);
+          setError('投稿の取得に失敗しました');
+          
         }
       });
     }
-  }, [token, error]);
+  }, [token, isDeleting]);
 
   if (isLoading) {
     return null;
   }
 
-     const handleDelete = async (postId: string) => {
-        if(!token) return;
-        console.log('削除しました');
-        setIsDeleting(true);
-
-        const isConfirmed = confirm('本当に削除しますか？');
-          if (!isConfirmed) {
-            setIsDeleting(false);
-        return;}
-
-        try {
-          const response = await deletePost(token, postId);
-          setPosts(posts.filter(post => post.id !== postId));
-        }catch(err) {
-          setError("投稿の削除に失敗しました");
-        }finally {
-          setIsDeleting(false);
-        }
+  const handleDelete = async (postId: string) => {
+    if (!token) return;
+    if (!confirm('本当に削除しますか？')) {
+        return;
     }
+
+    setIsDeleting(true);
+    try {
+        const response = await deletePost(token, postId);
+        if (response.success) {
+            setPosts(posts.filter(post => post.id !== postId));
+        } else {
+            setError("投稿の削除に失敗しました");
+        }
+    } catch (err) {
+        setError("ネットワークエラーが発生しました");
+    } finally {
+        setIsDeleting(false);
+    }
+};
+
 
   const formatDate = (dateString: string) => {
     const options: Intl.DateTimeFormatOptions = {
@@ -110,10 +115,11 @@ const PostsPage = () => {
           </div>
         )}
         {error && (
-          <div className="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg">
-            {error}
-          </div>
-        )}
+            <div className="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg">
+                {error}
+             </div>
+            )}
+
         <div className="grid gap-4">
           {posts.map(post => (
             <div key={post.id} className="p-4 bg-white rounded shadow overflow-hidden break-words">

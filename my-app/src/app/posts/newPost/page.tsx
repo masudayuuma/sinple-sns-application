@@ -34,14 +34,25 @@ const NewPostPage = () => {
     e.preventDefault();
     if(!token) return;
     if (isContentValid && !isLoadingNewPost) {
-      console.log('投稿しました');
+      console.log('投稿します');
       setIsLoadingNewPost(true);
       try {
-        await createPost(token, content);
-        router.push('/posts?success=true');
+        const response = await createPost(token, content);
+        if(response.success && response.userData){
+          setContent(response.userData.body);
+          setError(null);
+          router.push('/posts?success=true');
+        } else if (response.error) {
+          setError(response.error);
+        }
       } catch (err) {
         setError('投稿に失敗しました');
         setIsLoadingNewPost(false);
+      }finally{
+        setTimeout(() => {
+          setIsLoadingNewPost(false);
+          setError(null);
+        }, 3000);
       }
     }
   }
@@ -50,7 +61,6 @@ const NewPostPage = () => {
     <Layout>
       <div className="container mx-auto p-4">
         <h1 className="text-3xl font-bold mb-4">新規投稿</h1>
-        {error && <div className="mb-4 text-red-600">{error}</div>}
         <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md">
           <textarea
             value={content}
@@ -73,6 +83,13 @@ const NewPostPage = () => {
             {isLoadingNewPost ? '処理中...' : '投稿'}
           </button>
         </form>
+        {
+            error && (
+              <div className="p-4 mt-2 text-sm text-red-700 bg-red-100 rounded-lg">
+                {error}
+              </div>
+            )
+          }
       </div>
     </Layout>
   );
