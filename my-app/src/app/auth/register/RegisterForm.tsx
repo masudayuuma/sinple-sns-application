@@ -34,8 +34,9 @@ const RegisterForm = () => {
 
             const response = await register(name, email, password);
             if (!response.success) {
-                setError(response.error || 'メールアドレスまたはパスワードが間違っています');
+                setError(response.error || 'エラーが発生しました');
                 setShowErrorMessage(true);
+                console.log(response.error);
                 setTimeout(() => {
                     setError(null);
                     setIsLoading(false);

@@ -28,10 +28,11 @@ const LoginForm = () => {
         if (isFormValid && !isLoading) {
             setIsLoading(true);
             setError(null);
+            console.log('login');
 
             const response = await login(email, password);
             if (!response.success) {
-                setError(response.error || 'メールアドレスまたはパスワードが間違っています');
+                setError(response.error || 'エラーが発生しました');
                 setShowErrorMessage(true);
                 setTimeout(() => {
                     setError(null);

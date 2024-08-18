@@ -34,7 +34,10 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
         <div className="w-full flex flex-col items-center justify-center">
           {children}
           {pathname === '/auth/login' && (
-            <Link href="/auth/register" className="mt-2 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-700">
+            <Link 
+              href="/auth/register" 
+              className="mt-2 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-700"
+            >
               新規登録の方はこちらへ
             </Link>
           )}

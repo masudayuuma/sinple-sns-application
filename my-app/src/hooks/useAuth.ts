@@ -35,12 +35,9 @@ const useAuth = () => {
     const response = await signIn({ email, password });
     if (response.success && response.userData && response.token) {
         localStorage.setItem('token', response.token);
-        setToken(response.token);
-        setUser(response.userData);
         router.push('/posts');
         return { success: true, error: null };
     } else {
-        console.log(response.error);
         return { success: false, error: response.error };
     }
 };
@@ -52,7 +49,6 @@ const useAuth = () => {
       router.push('/posts');
       return { success: true, error: null };
     } else {
-      console.log (response.error);
       return { success :false , error: response.error };
     }
   };

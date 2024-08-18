@@ -139,7 +139,7 @@ const PostsPage = () => {
                   isDeleting ? 'bg-gray-400 cursor-not-allowed' : 'hover:bg-red-100'
                   }`}
                 >
-                <FontAwesomeIcon icon={faTrash} /> 削除
+                <FontAwesomeIcon icon={faTrash} /> { isDeleting ? '削除中' : '削除' }
                 </button>
                 )}
 
