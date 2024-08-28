@@ -11,24 +11,45 @@ const useAuth = () => {
   const pathname = usePathname(); 
 
   useEffect(() => {
+    const checkAuth = async () => {
     if (pathname.startsWith('/auth')) {
       return;
     }
 
     const storedToken = localStorage.getItem('token');
-    if (storedToken) {
-      getUserData(storedToken).then(response => {
-        if (response.success && response.userData) {
+    if(storedToken) {
+      try {
+        const response = await getUserData(storedToken);
+        if(response.success && response.userData) {
           setUser(response.userData);
           setToken(storedToken);
         } else {
           localStorage.removeItem('token');
           router.push('/auth/login?success=false');
         }
-        });
-      } else {
+      } catch (error) {
+        console.log('Error fatching user data:', error);
+        localStorage.removeItem('token');
+        router.push('/auth/login?success=false');
+      }
+    }else {
       router.push('/auth/login');
+    }  
     }
+    checkAuth();
+    // if (storedToken) {
+    //   getUserData(storedToken).then(response => {
+    //     if (response.success && response.userData) {
+    //       setUser(response.userData);
+    //       setToken(storedToken);
+    //     } else {
+    //       localStorage.removeItem('token');
+    //       router.push('/auth/login?success=false');
+    //     }
+    //     });
+    //   } else {
+    //   router.push('/auth/login');
+    // }
   }, [pathname, router]);
 
   const login = async (email: string, password: string): Promise<ApiResponse<null>> => {
