@@ -16,6 +16,7 @@ const useFlashMessage = () => {
       setFlashMessage("");
     }, 3000);
   };
+
   return { flashMessage, type, isVisible, showFlashMessage };
 };
 

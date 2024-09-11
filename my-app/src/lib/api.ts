@@ -1,5 +1,6 @@
-import { User } from "../recoil/atoms";
-import { Post } from "../hooks/usePosts";
+import { User } from "./recoil/atoms";
+import { Post } from "../app/mainApp/posts/usePosts";
+import { API_BASE_URL } from "./config";
 
 interface ApiResponse<T> {
   success: boolean;
@@ -7,8 +8,6 @@ interface ApiResponse<T> {
   token?: string;
   error?: string | null;
 }
-
-const API_BASE_URL = "https://simp-340605.an.r.appspot.com";
 
 export async function createAccount(data: {
   name: string;
@@ -49,8 +48,6 @@ export async function signIn(data: {
       body: JSON.stringify(data),
     });
     const result = await response.json();
-    console.log(result);
-    console.log(response);
     if (response.status === 500) {
       return {
         success: false,

@@ -1,9 +1,9 @@
 "use client";
 
-import { createPost } from "@/utils/api";
+import { createPost } from "@/lib/api";
 import { useRouter } from "next/navigation";
 import { useRecoilValue } from "recoil";
-import { tokenState } from "@/recoil/atoms";
+import { tokenState } from "@/lib/recoil/atoms";
 
 type FlashMessageType = "success" | "error";
 
@@ -21,13 +21,11 @@ export default function useMakeNewPost(
       );
       return;
     }
-    const response = await createPost(token, content);
-    console.log("response");
-    if (response.success) {
-      console.log("success");
+    const { success, error, userData } = await createPost(token, content);
+    if (success && userData) {
       router.push("/mainApp/posts?success=true");
-    } else if (response.error) {
-      showFlashMessage(response.error, "error");
+    } else if (!success && error) {
+      showFlashMessage(error, "error");
     } else {
       showFlashMessage("予期しないエラーが発生しました。", "error");
     }

@@ -1,34 +1,28 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { nameMaxLenght, passwordMinLenght } from "@/lib/config";
+import React, { useState } from "react";
 
 interface RegisterFormProps {
   name: string;
   email: string;
   password: string;
-  setName: (name: string) => void;
-  setEmail: (email: string) => void;
-  setPassword: (password: string) => void;
-  isLoading: boolean;
+  onChangeName: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChangeEmail: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChangePassword: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  isSubmitting: boolean;
 }
 
 const RegisterForm: React.FC<RegisterFormProps> = ({
   name,
   email,
   password,
-  setName,
-  setEmail,
-  setPassword,
-  isLoading,
+  onChangeName,
+  onChangeEmail,
+  onChangePassword,
+  isSubmitting,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) =>
-    setName(e.target.value);
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) =>
-    setEmail(e.target.value);
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) =>
-    setPassword(e.target.value);
-
   const toggleShowPassword = () => setShowPassword(!showPassword);
 
   return (
@@ -41,13 +35,15 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
         <input
           type="text"
           value={name}
-          onChange={handleNameChange}
-          placeholder="20文字以内で入力してください"
+          onChange={onChangeName}
+          placeholder={`${nameMaxLenght}文字以内で入力してください`}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           required
-          disabled={isLoading}
+          disabled={isSubmitting}
         />
-        <p className="text-xs text-gray-500">現在の文字数: {name.length}/20</p>
+        <p className="text-xs text-gray-500">
+          現在の文字数: {name.length}/{nameMaxLenght}
+        </p>
       </div>
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700">
@@ -56,11 +52,11 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
         <input
           type="email"
           value={email}
-          onChange={handleEmailChange}
+          onChange={onChangeEmail}
           placeholder="メールアドレスを入力してください"
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           required
-          disabled={isLoading}
+          disabled={isSubmitting}
         />
       </div>
       <div className="mb-4">
@@ -71,11 +67,11 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
           <input
             type={showPassword ? "text" : "password"}
             value={password}
-            onChange={handlePasswordChange}
-            placeholder="8文字以上で入力してください"
+            onChange={onChangePassword}
+            placeholder={`${passwordMinLenght}文字以上で入力してください`}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             required
-            disabled={isLoading}
+            disabled={isSubmitting}
           />
           <button
             type="button"

@@ -2,10 +2,10 @@ import React from "react";
 import Link from "next/link";
 import { FaListAlt, FaPlus, FaUser } from "react-icons/fa";
 
-const BottomNavigation = () => {
+const ButtomNavigation = () => {
   return (
-    <nav className="fixed bottom-0 left-0 w-full bg-white border-t border-gray-200">
-      <div className="flex justify-around p-4">
+    <nav className="w-full bg-white border-t border-gray-200">
+      <div className="flex p-4 justify-around">
         <Link
           href="/mainApp/posts"
           className="flex flex-col items-center text-gray-600 hover:text-gray-900"
@@ -32,4 +32,4 @@ const BottomNavigation = () => {
   );
 };
 
-export default BottomNavigation;
+export default ButtomNavigation;

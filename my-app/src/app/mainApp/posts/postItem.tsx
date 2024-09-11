@@ -1,11 +1,13 @@
-import { Post } from "@/hooks/usePosts";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
+import { Post } from "./usePosts";
+import { defaultIcon } from "@/lib/config";
+import { User } from "@/lib/recoil/atoms";
 
 interface PostItemProps {
   post: Post;
-  userInfo: any;
+  userInfo: User | null;
   isDeleting: boolean;
   onDelete: (id: string) => void;
 }
@@ -45,9 +47,7 @@ const PostItem: React.FC<PostItemProps> = ({
       <div className="flex justify-between items-center mb-2">
         <div className="flex items-center mb-2">
           <img
-            src={
-              post.user.iconImageUrl || `https://robohash.org/${post.user.name}`
-            }
+            src={post.user.iconImageUrl || defaultIcon}
             alt="User Icon"
             className="w-10 h-10 rounded-full mr-2"
           />
@@ -70,7 +70,9 @@ const PostItem: React.FC<PostItemProps> = ({
           </button>
         )}
       </div>
-      <p>{formatPostContent(post.body)}</p>
+      <div className="w-full p-2 border border-gray-300 rounded-md shadow-sm">
+        <p>{formatPostContent(post.body)}</p>
+      </div>
     </div>
   );
 };

@@ -1,11 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
-import useFlashMessage from "@/hooks/useFlashMessage";
-import FlashMessage from "@/components/FlashMessage";
+import useFlashMessage from "@/lib/hooks/useFlashMessage";
+import FlashMessage from "@/lib/components/flashMessage";
 import InputContent from "@/app/mainApp/newPost/inputContent";
-import useMakeNewPost from "@/hooks/useMakeNewPost";
+import useMakeNewPost from "@/app/mainApp/newPost/useMakeNewPost";
 import MainLayout from "../layout";
+import { contentMaxLenght } from "@/lib/config";
 
 const NewPostPage = () => {
   const [content, setContent] = useState("");
@@ -18,15 +19,15 @@ const NewPostPage = () => {
 
   const isContentValid: boolean =
     calculateContentLength(content) > 0 &&
-    calculateContentLength(content) <= 140;
+    calculateContentLength(content) <= contentMaxLenght;
 
   const handleSubmit = async (e: React.FormEvent) => {
+    if (!content) return;
     e.preventDefault();
     setIsLoadingNewPost(true);
     await makeNewPost(content);
-    setTimeout(() => {
-      setIsLoadingNewPost(false);
-    }, 2000);
+    setContent("");
+    setIsLoadingNewPost(false);
   };
 
   return (
@@ -37,7 +38,7 @@ const NewPostPage = () => {
       >
         <InputContent
           content={content}
-          setContent={setContent}
+          onContentChange={(e) => setContent(e.target.value)}
           calculateContentLength={calculateContentLength}
         />
         <button

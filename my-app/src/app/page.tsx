@@ -1,6 +1,6 @@
 "use client";
 
-import useAuthRedirect from "@/hooks/useAuthRedirect";
+import useAuthRedirect from "@/lib/hooks/useAuthRedirect";
 
 export default function Home() {
   const { isLoading } = useAuthRedirect();

@@ -1,7 +1,7 @@
 "use client";
 
-import BottomNavigation from "@/components/BottomNavigation";
-import useAuthRedirect from "@/hooks/useAuthRedirect";
+import ButtomNavigation from "@/lib/components/buttomNavigation";
+import useAuthRedirect from "@/lib/hooks/useAuthRedirect";
 import React, { ReactNode } from "react";
 
 interface LayoutProps {
@@ -18,8 +18,8 @@ const MainLayout: React.FC<LayoutProps> = ({ children, title }) => {
       <h1 className="text-3xl font-bold text-center mb-4">{title}</h1>
       <hr className="border-gray-300 mb-6" />
       <div className="flex-grow container mx-auto ">{children}</div>
-      <div className="fixed bottom-0 left-0 w-full">
-        <BottomNavigation />
+      <div className="fixed bottom-0 w-full">
+        <ButtomNavigation />
       </div>
     </div>
   );

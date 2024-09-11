@@ -1,54 +1,52 @@
 "use client";
-import useAuth from "@/hooks/useAuth";
+import useAuth from "@/lib/hooks/useAuth";
 import React, { useState } from "react";
-import RegisterBotton from "@/app/auth/register/RegisterBottom";
-import FlashMessage from "@/components/FlashMessage";
-import RegisterForm from "@/app/auth/register/RegisterForm";
-import useFlashMessage from "@/hooks/useFlashMessage";
+import FlashMessage from "@/lib/components/flashMessage";
+import useFlashMessage from "@/lib/hooks/useFlashMessage";
+import { emailFormat, nameMaxLenght, passwordMinLenght } from "@/lib/config";
+import RegisterForm from "./registerForm";
+import RegisterButton from "./registerButtom";
 
 const RegisterPage = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isSumbitting, setisSumbitting] = useState(false);
   const { showFlashMessage, type, isVisible, flashMessage } = useFlashMessage();
   const { register } = useAuth();
 
   const isFormValid =
     name.length > 0 &&
-    name.length <= 20 &&
-    /^[a-zA-Z0-9_.+-]+@([a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]*\.)+[a-zA-Z]{2,}$/.test(
-      email
-    ) &&
-    password.length >= 8;
+    name.length <= nameMaxLenght &&
+    emailFormat.test(email) &&
+    password.length >= passwordMinLenght;
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-    const response = await register(name, email, password);
-    if (response) {
-      showFlashMessage(response, "error");
-      setIsLoading(false);
+    setisSumbitting(true);
+    const error = await register(name, email, password);
+    if (error) {
+      showFlashMessage(error, "error");
+      setisSumbitting(false);
     }
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <form className="bg-white p-6 rounded-lg shadow-md w-80">
+    <div className="p-4">
+      <form
+        onSubmit={handleRegister}
+        className="bg-white p-6 rounded-lg shadow-md w-80"
+      >
         <RegisterForm
           name={name}
           email={email}
           password={password}
-          setName={setName}
-          setEmail={setEmail}
-          setPassword={setPassword}
-          isLoading={isLoading}
+          onChangeName={(e) => setName(e.target.value)}
+          onChangeEmail={(e) => setEmail(e.target.value)}
+          onChangePassword={(e) => setPassword(e.target.value)}
+          isSubmitting={isSumbitting}
         />
-        <RegisterBotton
-          onRegister={handleRegister}
-          isLoading={isLoading}
-          isFormValid={isFormValid}
-        />
+        <RegisterButton isSubmitting={isSumbitting} isFormValid={isFormValid} />
       </form>
       <FlashMessage message={flashMessage} type={type} visible={isVisible} />
     </div>

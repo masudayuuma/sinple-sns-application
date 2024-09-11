@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { deletePost, getPosts } from "@/utils/api";
-import { tokenState, User } from "@/recoil/atoms";
+import { deletePost, getPosts } from "@/lib/api";
+import { tokenState, User } from "@/lib/recoil/atoms";
 import { useRecoilValue } from "recoil";
 
 export interface Post {

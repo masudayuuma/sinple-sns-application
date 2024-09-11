@@ -2,14 +2,14 @@ import React, { useRef, useState } from "react";
 
 interface EditProfileProps {
   isEditing: boolean;
-  changeIcon: (file: File) => Promise<any>;
-  setIsEditing: (isEditing: boolean) => void;
+  changeIcon: (file: File) => Promise<void>;
+  toggleEditing: (isEditing: boolean) => void;
 }
 
-const EditProfile: React.FC<EditProfileProps> = ({
+const EditIcon: React.FC<EditProfileProps> = ({
   isEditing,
   changeIcon,
-  setIsEditing,
+  toggleEditing,
 }) => {
   const [file, setFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -24,17 +24,26 @@ const EditProfile: React.FC<EditProfileProps> = ({
 
   const handleUpload = async () => {
     if (!file) return;
-    setIsEditing(true);
+    toggleEditing;
     await changeIcon(file);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
+    setFile(null);
     setIsModalOpen(false);
-    setIsEditing(false);
+    toggleEditing;
+  };
+
+  const handleCancel = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+    setFile(null);
+    setIsModalOpen(false);
   };
 
   return (
-    <div className="mt-4 flex flex-col items-center">
+    <div className="mt-2 flex flex-col items-center">
       <input
         type="file"
         onChange={handleFileChange}
@@ -77,7 +86,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
             </button>
 
             <button
-              onClick={() => setIsModalOpen(false)}
+              onClick={handleCancel}
               className="w-full py-2 px-4 mt-2 text-gray-700 border rounded-md hover:bg-gray-200"
             >
               キャンセル
@@ -85,14 +94,8 @@ const EditProfile: React.FC<EditProfileProps> = ({
           </div>
         </div>
       )}
-
-      {isEditing && (
-        <div className="fixed inset-0 flex items-center justify-center z-50">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 border-solid"></div>
-        </div>
-      )}
     </div>
   );
 };
 
-export default EditProfile;
+export default EditIcon;

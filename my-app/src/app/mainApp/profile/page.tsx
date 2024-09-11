@@ -1,17 +1,18 @@
 "use client";
 
 import React, { useState } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { userState } from "../../../recoil/atoms";
-import useAuth from "../../../hooks/useAuth";
-import useFlashMessage from "@/hooks/useFlashMessage";
-import FlashMessage from "@/components/FlashMessage";
+import { useRecoilValue } from "recoil";
+import { userState } from "../../../lib/recoil/atoms";
+import useAuth from "../../../lib/hooks/useAuth";
+import useFlashMessage from "@/lib/hooks/useFlashMessage";
+import FlashMessage from "@/lib/components/flashMessage";
 import LogoutButton from "@/app/mainApp/profile/logout";
-import useEditProfile from "@/hooks/useEditIcon";
-import EditProfile from "@/app/mainApp/profile/editIcon";
+import useEditProfile from "@/app/mainApp/profile/useEditIcon";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import MainLayout from "../layout";
+import EditIcon from "./editIcon";
+import { defaultIcon } from "@/lib/config";
 
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -26,21 +27,18 @@ const Profile = () => {
   };
 
   if (!userInfo) return <div>Loading</div>;
-
   return (
     <MainLayout title="プロフィール">
       <div className="flex justify-center mb-6">
         <div className="relative group">
           <img
-            src={
-              userInfo.iconImageUrl || `https://robohash.org/${userInfo.name}`
-            }
+            src={userInfo.iconImageUrl || defaultIcon}
             alt="User Icon"
-            className="rounded-full w-48 h-48 border-4 border-black"
+            className="rounded-full w-48 h-48 border-2 border-black"
           />
-          <EditProfile
+          <EditIcon
             isEditing={isEditing}
-            setIsEditing={setIsEditing}
+            toggleEditing={() => setIsEditing(!isEditing)}
             changeIcon={changeIcon}
           />
         </div>

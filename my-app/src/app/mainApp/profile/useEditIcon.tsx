@@ -1,10 +1,14 @@
-import { tokenState, userState } from "@/recoil/atoms";
-import { uploadIconImage } from "@/utils/api";
+import { uploadIconImage } from "@/lib/api";
+import { tokenState, userState } from "@/lib/recoil/atoms";
 import { useRecoilState, useRecoilValue } from "recoil";
+
+interface UseEditProfileReturn {
+  changeIcon: (icon: File) => Promise<void>;
+}
 
 export default function (
   showFlashMessage: (message: string, type: "success" | "error") => void
-) {
+): UseEditProfileReturn {
   const token = useRecoilValue(tokenState);
   const [userInfo, setUserInfo] = useRecoilState(userState);
 

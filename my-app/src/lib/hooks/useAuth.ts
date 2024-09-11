@@ -1,7 +1,7 @@
 import { useRecoilState } from "recoil";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { userState, tokenState } from "../recoil/atoms";
-import { getUserData, signIn, createAccount } from "../utils/api";
+import { getUserData, signIn, createAccount } from "../api";
 
 const useAuth = () => {
   const [user, setUser] = useRecoilState(userState);

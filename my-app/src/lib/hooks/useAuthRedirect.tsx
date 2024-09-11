@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter, usePathname } from "next/navigation";
 import useAuth from "./useAuth";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { tokenState, userState } from "@/recoil/atoms";
+import { useRecoilState } from "recoil";
+import { tokenState, userState } from "@/lib/recoil/atoms";
+import { usePathname, useRouter } from "next/navigation";
 
 const useAuthRedirect = () => {
   const router = useRouter();
@@ -29,7 +29,6 @@ const useAuthRedirect = () => {
       } else {
         if (!pathname.startsWith("/auth")) {
           router.push("/auth/login");
-          console.log("redirected to login page");
         } else if (userInfo || token) {
           setUserInfo(null);
           setToken(null);

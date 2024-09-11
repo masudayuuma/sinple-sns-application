@@ -3,13 +3,13 @@
 import React, { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useRecoilValue } from "recoil";
-import { userState } from "../../../recoil/atoms";
+import { userState } from "../../../lib/recoil/atoms";
 import Link from "next/link";
-import useFlashMessage from "@/hooks/useFlashMessage";
-import FlashMessage from "@/components/FlashMessage";
-import usePosts from "@/hooks/usePosts";
+import useFlashMessage from "@/lib/hooks/useFlashMessage";
+import usePosts from "@/app/mainApp/posts/usePosts";
 import PostItem from "@/app/mainApp/posts/postItem";
 import MainLayout from "../layout";
+import FlashMessage from "@/lib/components/flashMessage";
 
 const PostsPage = () => {
   const router = useRouter();
@@ -18,7 +18,6 @@ const PostsPage = () => {
   const [isDeleting, setIsDeleting] = useState(false);
   const { flashMessage, type, isVisible, showFlashMessage } = useFlashMessage();
   const { posts, deletePostById } = usePosts(showFlashMessage);
-  console.log("posts");
 
   useEffect(() => {
     if (searchParams.get("success") === "true") {
