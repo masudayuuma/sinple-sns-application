@@ -4,8 +4,8 @@ import { FaListAlt, FaPlus, FaUser } from "react-icons/fa";
 
 const ButtomNavigation = () => {
   return (
-    <nav className="w-full bg-white border-t border-gray-200">
-      <div className="flex p-4 justify-around">
+    <nav className="w-full bg-white border-t border-gray-200 fixed bottom-0">
+      <div className="flex justify-between p-4 max-w-md mx-auto">
         <Link
           href="/mainApp/posts"
           className="flex flex-col items-center text-gray-600 hover:text-gray-900"
