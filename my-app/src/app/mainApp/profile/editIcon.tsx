@@ -1,19 +1,12 @@
 import React, { useRef, useState } from "react";
+import useEditIcon from "./useEditIcon";
+import AsyncButton from "@/lib/components/AsyncButton";
 
-interface EditProfileProps {
-  isEditing: boolean;
-  changeIcon: (file: File) => Promise<void>;
-  toggleEditing: (isEditing: boolean) => void;
-}
-
-const EditIcon: React.FC<EditProfileProps> = ({
-  isEditing,
-  changeIcon,
-  toggleEditing,
-}) => {
+const EditIcon: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { changeIcon } = useEditIcon();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -24,14 +17,12 @@ const EditIcon: React.FC<EditProfileProps> = ({
 
   const handleUpload = async () => {
     if (!file) return;
-    toggleEditing;
     await changeIcon(file);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
     setFile(null);
     setIsModalOpen(false);
-    toggleEditing;
   };
 
   const handleCancel = () => {
@@ -55,7 +46,7 @@ const EditIcon: React.FC<EditProfileProps> = ({
         htmlFor="fileInput"
         className="mt-2 px-6 py-2 bg-blue-600 text-white rounded-full text-center w-full cursor-pointer hover:bg-blue-700"
       >
-        画像を変更
+        アイコンを変更
       </label>
 
       {isModalOpen && (
@@ -72,18 +63,15 @@ const EditIcon: React.FC<EditProfileProps> = ({
                 className="w-24 h-24 rounded-full border-2 border-black"
               />
             </div>
-
-            <button
+            <AsyncButton
               onClick={handleUpload}
-              disabled={isEditing}
-              className={`w-full py-2 px-4 text-white rounded-md ${
-                isEditing
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-green-600 hover:bg-green-700"
-              }`}
+              loadingText="アップロード中"
+              baseClassName="w-full py-2 px-4 text-white rounded-md"
+              activeClassName="bg-green-600 hover:bg-green-700"
+              disabledClassName="bg-gray-400 cursor-not-allowed"
             >
-              {isEditing ? "アップロード中..." : "アップロード"}
-            </button>
+              アップロード
+            </AsyncButton>
 
             <button
               onClick={handleCancel}

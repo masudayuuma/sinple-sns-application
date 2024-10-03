@@ -1,42 +1,29 @@
 "use client";
 import useAuth from "@/lib/hooks/useAuth";
 import React, { useState } from "react";
-import FlashMessage from "@/lib/components/flashMessage";
-import useFlashMessage from "@/lib/hooks/useFlashMessage";
-import { emailFormat, nameMaxLenght, passwordMinLenght } from "@/lib/config";
-import RegisterForm from "./registerForm";
-import RegisterButton from "./registerButtom";
+import {
+  EMAIL_FORMAT,
+  NAME_MAX_LENGTH,
+  PASSWORD_MIN_LENGTH,
+} from "@/lib/config";
+import RegisterForm from "./RegisterForm";
+import AsyncButton from "@/lib/components/AsyncButton";
 
 const RegisterPage = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isSumbitting, setisSumbitting] = useState(false);
-  const { showFlashMessage, type, isVisible, flashMessage } = useFlashMessage();
-  const { register } = useAuth();
+  const { performRegistration } = useAuth();
 
   const isFormValid =
     name.length > 0 &&
-    name.length <= nameMaxLenght &&
-    emailFormat.test(email) &&
-    password.length >= passwordMinLenght;
-
-  const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setisSumbitting(true);
-    const error = await register(name, email, password);
-    if (error) {
-      showFlashMessage(error, "error");
-      setisSumbitting(false);
-    }
-  };
+    name.length <= NAME_MAX_LENGTH &&
+    EMAIL_FORMAT.test(email) &&
+    password.length >= PASSWORD_MIN_LENGTH;
 
   return (
     <div className="p-4">
-      <form
-        onSubmit={handleRegister}
-        className="bg-white p-6 rounded-lg shadow-md w-80"
-      >
+      <form className="bg-white p-6 rounded-lg shadow-md w-80">
         <RegisterForm
           name={name}
           email={email}
@@ -44,11 +31,19 @@ const RegisterPage = () => {
           onChangeName={(e) => setName(e.target.value)}
           onChangeEmail={(e) => setEmail(e.target.value)}
           onChangePassword={(e) => setPassword(e.target.value)}
-          isSubmitting={isSumbitting}
         />
-        <RegisterButton isSubmitting={isSumbitting} isFormValid={isFormValid} />
+        <AsyncButton
+          type="submit"
+          onClick={() => performRegistration(name, email, password)}
+          disabled={!isFormValid}
+          loadingText="登録中"
+          baseClassName="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white "
+          activeClassName="bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:border-indigo-700 focus:ring-1 focus:ring-indigo-700"
+          disabledClassName="bg-gray-400 cursor-not-allowed"
+        >
+          新規登録
+        </AsyncButton>
       </form>
-      <FlashMessage message={flashMessage} type={type} visible={isVisible} />
     </div>
   );
 };

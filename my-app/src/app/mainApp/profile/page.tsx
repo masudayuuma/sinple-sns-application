@@ -1,25 +1,19 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { useRecoilValue } from "recoil";
 import { userState } from "../../../lib/recoil/atoms";
 import useAuth from "../../../lib/hooks/useAuth";
-import useFlashMessage from "@/lib/hooks/useFlashMessage";
-import FlashMessage from "@/lib/components/flashMessage";
-import LogoutButton from "@/app/mainApp/profile/logout";
-import useEditProfile from "@/app/mainApp/profile/useEditIcon";
+import LogoutButton from "@/app/mainApp/profile/Logout";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import MainLayout from "../layout";
-import EditIcon from "./editIcon";
-import { defaultIcon } from "@/lib/config";
+import EditIcon from "./EditIcon";
+import { DEFAULT_ICON_URL } from "@/lib/config";
 
 const Profile = () => {
-  const [isEditing, setIsEditing] = useState(false);
   const { logout } = useAuth();
   const userInfo = useRecoilValue(userState);
-  const { flashMessage, type, showFlashMessage, isVisible } = useFlashMessage();
-  const { changeIcon } = useEditProfile(showFlashMessage);
 
   const handleLogout = () => {
     alert("ログアウトします");
@@ -32,15 +26,11 @@ const Profile = () => {
       <div className="flex justify-center mb-6">
         <div className="relative group">
           <img
-            src={userInfo.iconImageUrl || defaultIcon}
+            src={userInfo.iconImageUrl || DEFAULT_ICON_URL}
             alt="User Icon"
             className="rounded-full w-48 h-48 border-2 border-black"
           />
-          <EditIcon
-            isEditing={isEditing}
-            toggleEditing={() => setIsEditing(!isEditing)}
-            changeIcon={changeIcon}
-          />
+          <EditIcon />
         </div>
       </div>
       <div className="text-center mb-4">
@@ -51,8 +41,7 @@ const Profile = () => {
         </p>
       </div>
 
-      <LogoutButton onLogout={handleLogout} isEditing={isEditing} />
-      <FlashMessage message={flashMessage} type={type} visible={isVisible} />
+      <LogoutButton onLogout={handleLogout} />
     </MainLayout>
   );
 };

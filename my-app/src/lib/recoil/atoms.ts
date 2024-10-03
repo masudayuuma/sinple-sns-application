@@ -1,18 +1,22 @@
 import { atom } from "recoil";
+import { LoggedInUser, FlashMessageType } from "../types";
 
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  iconImageUrl?: string;
+interface FlashMessageState {
+  message: string;
+  type: FlashMessageType;
+  isVisible: boolean;
 }
 
-export const userState = atom<User | null>({
+export const userState = atom<LoggedInUser | null>({
   key: "userState",
   default: null,
 });
 
-export const tokenState = atom<string | null>({
-  key: "tokenState",
-  default: null,
+export const FlashMessageState = atom<FlashMessageState>({
+  key: "flashMessageState",
+  default: {
+    message: "",
+    type: "success",
+    isVisible: false,
+  },
 });

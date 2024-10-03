@@ -2,55 +2,43 @@
 
 import { useEffect, useState } from "react";
 import { deletePost, getPosts } from "@/lib/api";
-import { tokenState, User } from "@/lib/recoil/atoms";
-import { useRecoilValue } from "recoil";
+import { LOCAL_STORAGE_TOKEN_KEY } from "@/lib/config";
+import useFlashMessage from "@/lib/hooks/useFlashMessage";
+import { Post } from "@/lib/types";
 
-export interface Post {
-  id: string;
-  body: string;
-  userId: string;
-  createdAt: string;
-  user: User;
-}
-
-export default function usePosts(
-  showFlashMessage: (message: string, type: "success" | "error") => void
-) {
+export default function usePosts() {
   const [posts, setPosts] = useState<Post[]>([]);
-  const token = useRecoilValue(tokenState);
+  const storedToken = localStorage.getItem(LOCAL_STORAGE_TOKEN_KEY);
+  const { showFlashMessage } = useFlashMessage();
 
   useEffect(() => {
-    const fetchPosts = async (token: string) => {
-      const { success, userData, error } = await getPosts(token);
-      if (success && userData) {
-        setPosts(userData);
-      } else if (!success && error) {
-        showFlashMessage(error, "error");
+    const fetchPosts = async (storedToken: string) => {
+      const response = await getPosts(storedToken);
+      if (response.success) {
+        setPosts(response.data);
       } else {
-        showFlashMessage("予期しないエラーが発生しました", "error");
+        showFlashMessage(response.error, "error");
       }
     };
-    if (token) {
-      fetchPosts(token);
+    if (storedToken) {
+      fetchPosts(storedToken);
     }
-  }, [token]);
+  }, [storedToken]);
 
   const deletePostById = async (postId: string) => {
-    if (!token) {
+    if (!storedToken) {
       showFlashMessage(
         "トークンが存在しません。再度ログインしてください",
         "error"
       );
       return;
     }
-    const { success, userData, error } = await deletePost(token, postId);
-    if (success && userData === null) {
+    const response = await deletePost(storedToken, postId);
+    if (response.success) {
       setPosts((prev) => prev.filter((post) => post.id !== postId));
       showFlashMessage("投稿を削除しました", "success");
-    } else if (!success && error) {
-      showFlashMessage(error, "error");
     } else {
-      showFlashMessage("予期しないエラーが発生しました", "error");
+      showFlashMessage(response.error, "error");
     }
   };
 

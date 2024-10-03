@@ -1,23 +1,22 @@
-import { useState } from "react";
-
-type FlashMessageType = "success" | "error";
+import { useSetRecoilState } from "recoil";
+import { FlashMessageState } from "../recoil/atoms";
+import { FlashMessageType } from "../types";
 
 const useFlashMessage = () => {
-  const [flashMessage, setFlashMessage] = useState("");
-  const [type, setType] = useState<FlashMessageType>("success");
-  const [isVisible, setIsVisible] = useState(false);
+  const setFlashMessage = useSetRecoilState(FlashMessageState);
 
   const showFlashMessage = (message: string, type: FlashMessageType) => {
-    setFlashMessage(message);
-    setType(type);
-    setIsVisible(true);
+    setFlashMessage({ message, type, isVisible: true });
     setTimeout(() => {
-      setIsVisible(false);
-      setFlashMessage("");
+      setFlashMessage({
+        message: "",
+        type: "success",
+        isVisible: false,
+      });
     }, 3000);
   };
 
-  return { flashMessage, type, isVisible, showFlashMessage };
+  return { showFlashMessage };
 };
 
 export default useFlashMessage;

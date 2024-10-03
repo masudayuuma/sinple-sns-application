@@ -1,65 +1,69 @@
-import { useRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import { useRouter } from "next/navigation";
-import { userState, tokenState } from "../recoil/atoms";
+import { userState } from "../recoil/atoms";
 import { getUserData, signIn, createAccount } from "../api";
+import { LOCAL_STORAGE_TOKEN_KEY } from "../config";
+import useFlashMessage from "./useFlashMessage";
 
 const useAuth = () => {
-  const [user, setUser] = useRecoilState(userState);
-  const [token, setToken] = useRecoilState(tokenState);
+  const setUser = useSetRecoilState(userState);
   const router = useRouter();
+  const { showFlashMessage } = useFlashMessage();
 
-  const getCurrentUserInfo = async (token: string) => {
-    const { success, userData } = await getUserData(token);
-    if (success && userData) {
-      setUser(userData);
-      setToken(token);
+  const fetchAndSetUserInfo = async (token: string) => {
+    const response = await getUserData(token);
+    if (response.success) {
+      setUser(response.data);
     } else {
-      localStorage.removeItem("token");
-      router.push("/auth/login?success=false");
+      localStorage.removeItem(LOCAL_STORAGE_TOKEN_KEY);
+      router.push("/auth/login");
+      showFlashMessage(response.error, "error");
     }
   };
 
-  const login = async (email: string, password: string) => {
-    const { success, userData, token, error } = await signIn({
+  const performLogin = async (email: string, password: string) => {
+    const response = await signIn({
       email,
       password,
     });
-    if (success && userData && token) {
-      setUser(userData);
-      setToken(token);
-      localStorage.setItem("token", token);
+    if (response.success) {
+      const { user, token } = response.data;
+      setUser(user);
+      localStorage.setItem(LOCAL_STORAGE_TOKEN_KEY, token);
       router.push("/mainApp/posts");
-      return null;
     } else {
-      return error || "予期しないエラーが発生しました";
+      showFlashMessage(response.error, "error");
     }
   };
 
-  const register = async (name: string, email: string, password: string) => {
-    const { success, userData, token, error } = await createAccount({
+  const performRegistration = async (
+    name: string,
+    email: string,
+    password: string
+  ) => {
+    const response = await createAccount({
       name,
       email,
       password,
     });
-    if (success && userData && token) {
-      setUser(userData);
-      setToken(token);
-      localStorage.setItem("token", token);
+    if (response.success) {
+      const { user, token } = response.data;
+      setUser(user);
+      localStorage.setItem(LOCAL_STORAGE_TOKEN_KEY, token);
       router.push("/mainApp/posts");
-      return null;
     } else {
-      return error || "予期しないエラーが発生しました";
+      showFlashMessage(response.error, "error");
     }
   };
 
   const logout = () => {
     setUser(null);
-    setToken(null);
-    localStorage.removeItem("token");
-    router.push("/auth/login?success=true");
+    localStorage.removeItem(LOCAL_STORAGE_TOKEN_KEY);
+    router.push("/auth/login");
+    showFlashMessage("ログアウトしました", "success");
   };
 
-  return { login, register, logout, getCurrentUserInfo };
+  return { performLogin, performRegistration, logout, fetchAndSetUserInfo };
 };
 
 export default useAuth;

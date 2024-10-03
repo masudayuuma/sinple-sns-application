@@ -1,6 +1,6 @@
 "use client";
 
-import ButtomNavigation from "@/lib/components/buttomNavigation";
+import ButtomNavigation from "@/lib/components/ButtomNavigation";
 import useAuthRedirect from "@/lib/hooks/useAuthRedirect";
 import React, { ReactNode } from "react";
 

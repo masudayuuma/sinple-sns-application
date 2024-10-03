@@ -3,40 +3,39 @@
 import { useEffect, useState } from "react";
 import useAuth from "./useAuth";
 import { useRecoilState } from "recoil";
-import { tokenState, userState } from "@/lib/recoil/atoms";
+import { userState } from "@/lib/recoil/atoms";
 import { usePathname, useRouter } from "next/navigation";
+import { LOCAL_STORAGE_TOKEN_KEY } from "../config";
 
 const useAuthRedirect = () => {
   const router = useRouter();
   const pathname = usePathname();
   const [isLoading, setIsLoading] = useState(true);
   const [userInfo, setUserInfo] = useRecoilState(userState);
-  const [token, setToken] = useRecoilState(tokenState);
-  const { getCurrentUserInfo } = useAuth();
+  const { fetchAndSetUserInfo } = useAuth();
 
   useEffect(() => {
     const checkAuth = async () => {
-      const storedToken = localStorage.getItem("token");
+      const storedToken = localStorage.getItem(LOCAL_STORAGE_TOKEN_KEY);
+      const isAuthPage = pathname.startsWith("/auth");
+
       if (storedToken) {
-        if (pathname.startsWith("/auth") || pathname === "/") {
+        if (isAuthPage || pathname === "/") {
           router.push("/mainApp/posts");
-        } else if (userInfo === null || token === null) {
-          await getCurrentUserInfo(storedToken);
-          setIsLoading(false);
-        } else {
-          setIsLoading(false);
+          return;
+        } else if (userInfo === null) {
+          await fetchAndSetUserInfo(storedToken);
         }
       } else {
-        if (!pathname.startsWith("/auth")) {
+        if (!isAuthPage) {
           router.push("/auth/login");
-        } else if (userInfo || token) {
+          return;
+        } else if (userInfo) {
           setUserInfo(null);
-          setToken(null);
-          setIsLoading(false);
-        } else {
-          setIsLoading(false);
+          localStorage.removeItem(LOCAL_STORAGE_TOKEN_KEY);
         }
       }
+      setIsLoading(false);
     };
 
     checkAuth();

@@ -1,32 +1,31 @@
 import { uploadIconImage } from "@/lib/api";
-import { tokenState, userState } from "@/lib/recoil/atoms";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { LOCAL_STORAGE_TOKEN_KEY } from "@/lib/config";
+import { userState } from "@/lib/recoil/atoms";
+import { useSetRecoilState } from "recoil";
+import useFlashMessage from "@/lib/hooks/useFlashMessage";
 
 interface UseEditProfileReturn {
   changeIcon: (icon: File) => Promise<void>;
 }
 
-export default function (
-  showFlashMessage: (message: string, type: "success" | "error") => void
-): UseEditProfileReturn {
-  const token = useRecoilValue(tokenState);
-  const [userInfo, setUserInfo] = useRecoilState(userState);
+export default function (): UseEditProfileReturn {
+  const setUserInfo = useSetRecoilState(userState);
+  const storedToken = localStorage.getItem(LOCAL_STORAGE_TOKEN_KEY);
+  const { showFlashMessage } = useFlashMessage();
 
   const changeIcon = async (icon: File) => {
-    if (!token) {
+    if (!storedToken) {
       showFlashMessage(
         "トークンが存在しません。再度ログインしてください。",
         "error"
       );
       return;
     }
-    const { success, userData, error } = await uploadIconImage(token, icon);
-    if (success && userData) {
-      setUserInfo(userData);
-    } else if (!success && error) {
-      showFlashMessage(error, "error");
+    const response = await uploadIconImage(storedToken, icon);
+    if (response.success) {
+      setUserInfo(response.data);
     } else {
-      showFlashMessage("予期しないエラーが発生しました。", "error");
+      showFlashMessage(response.error, "error");
     }
   };
   return { changeIcon };

@@ -1,6 +1,6 @@
 "use client";
 
-import { nameMaxLenght, passwordMinLenght } from "@/lib/config";
+import { NAME_MAX_LENGTH, PASSWORD_MIN_LENGTH } from "@/lib/config";
 import React, { useState } from "react";
 
 interface RegisterFormProps {
@@ -10,7 +10,6 @@ interface RegisterFormProps {
   onChangeName: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onChangeEmail: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onChangePassword: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  isSubmitting: boolean;
 }
 
 const RegisterForm: React.FC<RegisterFormProps> = ({
@@ -20,7 +19,6 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
   onChangeName,
   onChangeEmail,
   onChangePassword,
-  isSubmitting,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
   const toggleShowPassword = () => setShowPassword(!showPassword);
@@ -36,13 +34,12 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
           type="text"
           value={name}
           onChange={onChangeName}
-          placeholder={`${nameMaxLenght}文字以内で入力してください`}
+          placeholder={`${NAME_MAX_LENGTH}文字以内で入力してください`}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           required
-          disabled={isSubmitting}
         />
         <p className="text-xs text-gray-500">
-          現在の文字数: {name.length}/{nameMaxLenght}
+          現在の文字数: {name.length}/{NAME_MAX_LENGTH}
         </p>
       </div>
       <div className="mb-4">
@@ -56,7 +53,6 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
           placeholder="メールアドレスを入力してください"
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           required
-          disabled={isSubmitting}
         />
       </div>
       <div className="mb-4">
@@ -68,10 +64,9 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
             type={showPassword ? "text" : "password"}
             value={password}
             onChange={onChangePassword}
-            placeholder={`${passwordMinLenght}文字以上で入力してください`}
+            placeholder={`${PASSWORD_MIN_LENGTH}文字以上で入力してください`}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             required
-            disabled={isSubmitting}
           />
           <button
             type="button"
