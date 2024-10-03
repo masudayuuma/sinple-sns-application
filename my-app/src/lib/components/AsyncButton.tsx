@@ -47,7 +47,7 @@ const AsyncButton: React.FC<AsyncButtonProps> = ({
     <button
       type={type}
       onClick={handleClick}
-      disabled={disabled || isProcessingRef.current}
+      disabled={disabled || isLoading}
       className={combinedClassName}
     >
       {isLoading ? loadingText : children}
