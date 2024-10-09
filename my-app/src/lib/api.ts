@@ -9,8 +9,10 @@ export async function createAccount(data: {
   return await apiRequest<{ user: LoggedInUser; token: string }>(
     "/account",
     "POST",
-    null,
-    data
+    data,
+    {
+      "Content-Type": "application/json",
+    }
   );
 }
 
@@ -21,18 +23,21 @@ export async function signIn(data: {
   return await apiRequest<{ user: LoggedInUser; token: string }>(
     "/auth",
     "POST",
-    null,
-    data
+    data,
+    {
+      "Content-Type": "application/json",
+    }
   );
 }
 
-export async function getUserData(
-  token: string
-): Promise<ApiResponse<LoggedInUser>> {
+export async function getUserData(): Promise<ApiResponse<LoggedInUser>> {
   const response = await apiRequest<{ user: LoggedInUser }>(
     "/account",
     "GET",
-    token
+    undefined,
+    {
+      "Content-Type": "application/json",
+    }
   );
   if (response.success) {
     return { success: true, data: response.data.user };
@@ -42,7 +47,6 @@ export async function getUserData(
 }
 
 export async function uploadIconImage(
-  token: string,
   file: File
 ): Promise<ApiResponse<LoggedInUser>> {
   const formData = new FormData();
@@ -51,9 +55,7 @@ export async function uploadIconImage(
   const response = await apiRequest<{ user: LoggedInUser }>(
     "/account/icon_image",
     "PATCH",
-    token,
-    formData,
-    true
+    formData
   );
   if (response.success) {
     return { success: true, data: response.data.user };
@@ -63,12 +65,16 @@ export async function uploadIconImage(
 }
 
 export async function createPost(
-  token: string,
   postContent: string
 ): Promise<ApiResponse<Post>> {
-  const response = await apiRequest<{ post: Post }>("/posts", "POST", token, {
-    post: { body: postContent },
-  });
+  const response = await apiRequest<{ post: Post }>(
+    "/posts",
+    "POST",
+    { post: { body: postContent } },
+    {
+      "Content-Type": "application/json",
+    }
+  );
   if (response.success) {
     return { success: true, data: response.data.post };
   } else {
@@ -76,8 +82,15 @@ export async function createPost(
   }
 }
 
-export async function getPosts(token: string): Promise<ApiResponse<Post[]>> {
-  const response = await apiRequest<{ posts: Post[] }>("/posts", "GET", token);
+export async function getPosts(): Promise<ApiResponse<Post[]>> {
+  const response = await apiRequest<{ posts: Post[] }>(
+    "/posts",
+    "GET",
+    undefined,
+    {
+      "Content-Type": "application/json",
+    }
+  );
   if (response.success) {
     return { success: true, data: response.data.posts };
   } else {
@@ -85,9 +98,8 @@ export async function getPosts(token: string): Promise<ApiResponse<Post[]>> {
   }
 }
 
-export async function deletePost(
-  token: string,
-  postId: string
-): Promise<ApiResponse<null>> {
-  return await apiRequest<null>(`/posts/${postId}`, "DELETE", token);
+export async function deletePost(postId: string): Promise<ApiResponse<null>> {
+  return await apiRequest<null>(`/posts/${postId}`, "DELETE", undefined, {
+    "Content-Type": "application/json",
+  });
 }
