@@ -10,14 +10,16 @@ const useAuth = () => {
   const router = useRouter();
   const { showFlashMessage } = useFlashMessage();
 
-  const fetchAndSetUserInfo = async (token: string) => {
-    const response = await getUserData(token);
+  const fetchAndSetUserInfo = async () => {
+    const response = await getUserData();
     if (response.success) {
       setUser(response.data);
+      return response.data;
     } else {
       localStorage.removeItem(LOCAL_STORAGE_TOKEN_KEY);
       router.push("/auth/login");
       showFlashMessage(response.error, "error");
+      return null;
     }
   };
 
