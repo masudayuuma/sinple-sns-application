@@ -46,13 +46,23 @@ function getErrorMessage(status: number, result: any): string {
 export async function apiRequest<T>(
   endpoint: string,
   method: string,
-  body: any,
+  body?: any,
   headers: Record<string, string> = {}
 ): Promise<ApiResponse<T>> {
   try {
+    const defaultHeaders: Record<string, string> = {
+      "Content-Type": "application/json",
+    };
+
     const token = localStorage.getItem(LOCAL_STORAGE_TOKEN_KEY);
     if (token) {
-      headers["Authorization"] = `Bearer ${token}`;
+      defaultHeaders["Authorization"] = `Bearer ${token}`;
+    }
+
+    const mergedHeaders = { ...defaultHeaders, ...headers };
+
+    if (mergedHeaders["Content-Type"] === "") {
+      delete mergedHeaders["Content-Type"];
     }
 
     let requestBody = body;
@@ -64,7 +74,7 @@ export async function apiRequest<T>(
 
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       method,
-      headers,
+      headers: mergedHeaders,
       body: requestBody,
     });
 
